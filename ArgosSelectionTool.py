@@ -20,11 +20,12 @@ the_box = {
 #Create a variable pointing to the data file
 file_name = 'data/raw/Satellite tracking of black-capped petrels 2019-argos.csv'
 
-#Read the contents of one line into a list of lines
-f = open(file_name,'r') 
-
- #Read contents of file into a list
-line_list = f.readlines()
+#Read the contents of the file into a list of lines
+f = open(file_name,'r')
+#Read the headerline 
+headerLine = f.readline()
+#Read contents of one line
+lineString = f.readline()
 
 #Pretend we read one line of data from the file
 while lineString != "":
@@ -36,10 +37,11 @@ while lineString != "":
     event_id = line_data[0]   # Argos tracking event ID ("event-id")
     timestamp = line_data[2]  # Observation date ("timestamp")
     lc  = line_data[14]        # Observation location class ("argos:lc")
-    if lc not in ['"1"', '"2"', '"3"']: continue
-
-    lat = float(line_data[4])        # Observation latitude  ("location-lat")
-    lon = float(line_data[3])        # Observation longitude ("location-lon")
+    if lc not in ['"1"','"2"','"3"']:
+        lineString = f.readline()  
+        continue
+    lat = float(line_data[3])        # Observation latitude  ("location-lat")
+    lon = float(line_data[4])        # Observation longitude ("location-lon")
     tag_id = line_data[-3]     # Tag identifier ("tag-local-identifier")
     
     #Evaluate latitude and longitude conditions
@@ -51,3 +53,9 @@ while lineString != "":
         print(f'Record {event_id}: {tag_id} was IN the box at {timestamp}')
     else:
         print(f'Record {event_id}: {tag_id} was NOT IN the box at {timestamp}')
+
+    #Update line string
+    lineString = f.readline()
+
+#Close the file
+f.close()
